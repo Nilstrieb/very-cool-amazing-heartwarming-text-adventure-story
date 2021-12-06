@@ -1,2 +1,1 @@
-# very-cool-amazing-heartwarming-text-adventure-story
-cool
+# vewy-coow-amazing-heawtwawming-text-adventuwwe-stowy ヾ(≧▽≦*)o
