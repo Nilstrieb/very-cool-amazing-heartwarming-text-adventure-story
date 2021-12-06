@@ -1,0 +1,23 @@
+rooms:
+  outside:
+    message: |
+      You are in front of something. There is something.
+    verbs:
+      open:
+        door:
+          - ifState: outside-door-open
+            message: You open the door.
+            setState: outside-door-open
+          - message: The door is already open.
+      enter:
+        door:
+          - ifState: outside-door-open
+            message: You go through the door.
+            goRoom: corridor
+          - message: The door is already open
+      look:
+        door:
+          - message: A big door.
+  corridor:
+  station:
+  core:
