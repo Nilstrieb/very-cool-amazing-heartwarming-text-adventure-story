@@ -6,12 +6,18 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class Main {
-    private static final Path DEFAULT_PATH = Path.of("adventure.yml");
+    private static final String DEFAULT_PATH = "adventure.yml";
 
     public static void main(String[] args) {
         try {
             Story story = new StoryReader().read(DEFAULT_PATH);
-            System.out.println(story);
+
+            StoryView storyView = new ConsoleStoryView();
+
+            StoryTeller storyTeller = new StoryTeller(storyView, story);
+
+            storyTeller.start();
+
         } catch (JsonProcessingException e) {
             System.err.println("Invalid yaml file: " + e.getMessage());
         } catch (IOException e) {
