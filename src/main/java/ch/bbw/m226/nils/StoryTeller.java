@@ -1,13 +1,13 @@
 package ch.bbw.m226.nils;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class StoryTeller {
     private final StoryView view;
     private final Story story;
     private final Set<String> states;
+
+    private Story.Room currentRoom;
 
     public StoryTeller(StoryView view, Story story) {
         this.view = view;
@@ -16,19 +16,32 @@ public class StoryTeller {
     }
 
     public void start() {
-        this.enterRoom(story.rooms().get("outside"));
+
+        this.goToRoom("outside");
+    }
+
+    private void goToRoom(String name) {
+        this.currentRoom = this.story.rooms().get(name);
+
+        if (this.currentRoom == null) {
+            throw new RuntimeException("Invalid YAML file! Room '" + name + "' does not exist!");
+        }
+
+        this.enterRoom(this.currentRoom);
     }
 
     private void enterRoom(Story.Room room) {
         view.writeLine(room.message());
 
-        var instruction = view.readInstruction();
+        while (true) {
+            var instruction = view.readInstruction();
 
-        var optionalAction = this.findAction(instruction, room);
+            var optionalAction = this.findAction(instruction, this.currentRoom);
 
-        optionalAction.ifPresentOrElse(this::executeAction, () -> {
-            view.writeLine("This action is not supported.");
-        });
+            optionalAction.ifPresentOrElse(this::executeAction, () -> {
+                view.writeLine("This action is not supported.");
+            });
+        }
     }
 
     private Optional<Story.Action> findAction(Instruction instruction, Story.Room room) {
@@ -41,15 +54,30 @@ public class StoryTeller {
         return optionalVerb.flatMap(verb -> {
             var nouns = verb.getValue().entrySet();
 
-            return nouns.stream()
+            var actions = nouns.stream()
                     .filter(noun -> noun.getKey().equals(instruction.noun()))
-                    .flatMap(noun -> noun.getValue().stream())
-                    .filter(possibleAction ->
-                            possibleAction.ifState() == null || this.states.contains(possibleAction.ifState())
+                    .map(Map.Entry::getValue)
+                    .findAny()
+                    .orElseGet(ArrayList::new);
+
+
+            return actions.stream()
+                    .filter(action ->
+                            action.ifState() == null || this.states.contains(action.ifState())
                     )
                     .findFirst();
         });
     }
 
-    private void executeAction(Story.Action action) {}
+    private void executeAction(Story.Action action) {
+        view.writeLine(action.message());
+
+        if (action.setState() != null) {
+            this.states.add(action.setState());
+        }
+
+        if (action.goRoom() != null) {
+            this.goToRoom(action.goRoom());
+        }
+    }
 }

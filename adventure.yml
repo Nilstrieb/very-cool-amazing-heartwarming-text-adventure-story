@@ -6,15 +6,15 @@ rooms:
       open:
         door:
           - ifState: outside-door-open
-            message: You open the door.
+            message: The door is already open.
+          - message: You open the door.
             setState: outside-door-open
-          - message: The door is already open.
       enter:
         door:
           - ifState: outside-door-open
             message: You go through the door.
             goRoom: corridor
-          - message: The door is already open
+          - message: The door is closed
       look:
         door:
           - message: A big door.
