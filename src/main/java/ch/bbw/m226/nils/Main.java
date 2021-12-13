@@ -3,7 +3,6 @@ package ch.bbw.m226.nils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class Main {
     private static final String DEFAULT_PATH = "adventure.yml";

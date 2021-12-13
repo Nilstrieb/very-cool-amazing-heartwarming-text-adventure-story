@@ -3,7 +3,7 @@ package ch.bbw.m226.nils;
 import java.util.Scanner;
 
 public class ConsoleStoryView implements StoryView {
-    private Scanner stdin = new Scanner(System.in);
+    private final Scanner stdin = new Scanner(System.in);
 
     @Override
     public void writeLine(String message) {
@@ -11,7 +11,23 @@ public class ConsoleStoryView implements StoryView {
     }
 
     @Override
-    public String readLine() {
-        return stdin.nextLine().trim();
+    public Instruction readInstruction() {
+        Instruction instruction;
+
+        while (true) {
+
+            var input = stdin.nextLine().trim();
+            var split = input.split("\\s+");
+
+            if (split.length < 2) {
+                this.writeLine("Invalid instruction. Instruction must contain a verb and a noun.");
+                continue;
+            }
+
+            instruction = new Instruction(split[0], split[1]);
+            break;
+        }
+
+        return instruction;
     }
 }

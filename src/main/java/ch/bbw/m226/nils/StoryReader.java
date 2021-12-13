@@ -9,7 +9,7 @@ import java.io.IOException;
 public class StoryReader {
     public Story read(String path) throws IOException {
 
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        var objectMapper = new ObjectMapper(new YAMLFactory());
 
         return objectMapper.readValue(new File(path), Story.class);
     }
