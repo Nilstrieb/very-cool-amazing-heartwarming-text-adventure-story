@@ -17,7 +17,7 @@ public class StoryTeller {
 
     public void start() {
 
-        this.goToRoom("outside");
+        this.goToRoom("start");
     }
 
     private void goToRoom(String name) {
