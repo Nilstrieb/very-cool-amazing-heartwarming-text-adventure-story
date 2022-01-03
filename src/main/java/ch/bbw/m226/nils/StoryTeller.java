@@ -21,6 +21,12 @@ public class StoryTeller {
 
     public void step() {
         var instruction = view.readInstruction();
+
+        if (instruction == Instruction.EXIT_GAME) {
+            view.writeLine("Exiting game.");
+            System.exit(0);
+        }
+
         var optionalAction = this.findAction(instruction, this.currentRoom);
         optionalAction.ifPresentOrElse(this::executeAction, () -> view.writeLine("This action is not supported."));
     }
@@ -37,6 +43,9 @@ public class StoryTeller {
 
     private void enterRoom(Story.Room room) {
         view.writeLine(room.message());
+
+        String possibleActions = String.join(", ", room.verbs().keySet());
+        view.writeLine("Possible actions: " + possibleActions);
     }
 
     private Optional<Story.Action> findAction(Instruction instruction, Story.Room room) {

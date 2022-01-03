@@ -19,6 +19,10 @@ public class ConsoleStoryView implements StoryView {
             var input = stdin.nextLine().trim();
             var split = input.split("\\s+");
 
+            if (split[0].equals("?quit") || split[0].equals("?exit")) {
+                return Instruction.EXIT_GAME;
+            }
+
             if (split.length < 2) {
                 this.writeLine("Invalid instruction. Instruction must contain a verb and a noun.");
                 continue;

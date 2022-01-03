@@ -29,7 +29,7 @@ public class StoryTellerTest {
 
         teller.step();
 
-        assertEquals("This action is not supported.", output.get(1));
+        assertEquals("This action is not supported.", output.get(2));
     }
 
 

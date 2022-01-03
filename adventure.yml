@@ -1,7 +1,7 @@
 rooms:
   start:
     message: |
-      You are in front of a huge ancient underground temple. There is a big door in front of it.
+      You are in front of the entrance to an ancient underground temple. There is a big door.
     verbs:
       open:
         door:
@@ -14,7 +14,7 @@ rooms:
           - ifState: outside-door-open
             message: You go through the door.
             goRoom: corridor
-          - message: The door is closed
+          - message: The door is closed.
       look:
         door:
           - message: A big door.
@@ -26,13 +26,18 @@ rooms:
     verbs:
       go:
         forward:
+          - ifState: corridor-has-gone-forward-twice
+            message: |
+              You take another step.
+            goRoom: sacrifice-hall
+
           - ifState: corridor-has-gone-forward
             message: |
               Another step into what you hope is the right direction. You've lost every sense of orientation.
               The floor feels slippy, and everything feels wet. You continue walking into the same direction.
               After some walking, the echo of your steps changes. It feels bigger, and emptier. You look around,
               but you can't see anything.
-            goRoom: sacrifice-hall
+            setState: corridor-has-gone-forward-twice
 
           - message: |
               You go forwards, and it's getting darker with every step. For every footstep, there is a loud echo.
@@ -45,7 +50,7 @@ rooms:
         around:
           - message: You see a long and dark hallway, the only light comes from the door behind.
         back:
-          - message: The inside of the door looks just like the outside
+          - message: The inside of the door looks just like the outside.
         forward:
           - message: You see nothing but the deep void of darkness.
 
@@ -59,4 +64,4 @@ rooms:
     verbs:
       look:
         ghosts:
-          They are flying!
+          - message: They are flying!
