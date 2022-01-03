@@ -2,9 +2,9 @@ package ch.bbw.m226.nils;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StoryTellerTest {
 
@@ -23,16 +23,23 @@ public class StoryTellerTest {
         var view = new MockView(output);
 
         var teller = new StoryTeller(view, EMPTY_STORY);
+        teller.init();
 
+        view.queueInput(new Instruction("invalid", "action"));
+
+        teller.step();
+
+        assertEquals("This action is not supported.", output.get(1));
     }
 
 
     static class MockView implements StoryView {
-        private List<String> lines;
-        private Instruction next;
+        private final List<String> lines;
+        private final Queue<Instruction> next;
 
         public MockView(List<String> lines) {
             this.lines = lines;
+            this.next = new ArrayDeque<>();
         }
 
         @Override
@@ -40,13 +47,13 @@ public class StoryTellerTest {
             this.lines.add(message);
         }
 
-        public void setNext(Instruction next) {
-            this.next = next;
+        public void queueInput(Instruction next) {
+            this.next.add(next);
         }
 
         @Override
         public Instruction readInstruction() {
-            return next;
+            return this.next.poll();
         }
     }
 }

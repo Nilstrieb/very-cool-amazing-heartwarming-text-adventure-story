@@ -1,7 +1,7 @@
 rooms:
   start:
     message: |
-      You are in front of something. There is something.
+      You are in front of a huge ancient underground temple. There is a big door in front of it.
     verbs:
       open:
         door:
@@ -19,5 +19,44 @@ rooms:
         door:
           - message: A big door.
   corridor:
-  station:
-  core:
+    message: |
+      You enter the corridor right behind the door. It looks longer than it probably is, but you are unable
+      to see until the end of it. You stare into the darkness. You hear a sudden noise. The door just closed, and only
+      a tiny hole in the door lights you up.
+    verbs:
+      go:
+        forward:
+          - ifState: corridor-has-gone-forward
+            message: |
+              Another step into what you hope is the right direction. You've lost every sense of orientation.
+              The floor feels slippy, and everything feels wet. You continue walking into the same direction.
+              After some walking, the echo of your steps changes. It feels bigger, and emptier. You look around,
+              but you can't see anything.
+            goRoom: sacrifice-hall
+
+          - message: |
+              You go forwards, and it's getting darker with every step. For every footstep, there is a loud echo.
+              You feel alone, but also sense the presence of something. It feels like it's always there and watching you.
+              But you don't see anything but the pure darkness. The hole in the door has somehow disappeared.
+            setState: corridor-has-gone-forward
+        back:
+          - message: There is no going back.
+      look:
+        around:
+          - message: You see a long and dark hallway, the only light comes from the door behind.
+        back:
+          - message: The inside of the door looks just like the outside
+        forward:
+          - message: You see nothing but the deep void of darkness.
+
+  sacrifice-hall:
+    message: |
+      Suddenly everything gets bright. You realize that you're in a new room. It's huge, over 50 meters high and probably
+      with a diameter of 200 meters. You must have gone very far into the mountain, everything feels so huge. 
+      The room looks rather empty, and has a rounded shape towards the top. There is some strange looking device 
+      hanging from the top towards the center, exactly where you are standing right now. You panic and look around. 
+      There are strange blue ghosts flying through the hall, hundreds of them.
+    verbs:
+      look:
+        ghosts:
+          They are flying!

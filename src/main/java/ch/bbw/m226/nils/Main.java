@@ -15,7 +15,11 @@ public class Main {
 
             StoryTeller storyTeller = new StoryTeller(storyView, story);
 
-            storyTeller.start();
+            storyTeller.init();
+
+            while (true) {
+                storyTeller.step();
+            }
 
         } catch (JsonProcessingException e) {
             System.err.println("Invalid yaml file: " + e.getMessage());

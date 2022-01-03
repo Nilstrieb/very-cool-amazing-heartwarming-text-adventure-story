@@ -15,9 +15,14 @@ public class StoryTeller {
         this.states = new HashSet<>();
     }
 
-    public void start() {
-
+    public void init() {
         this.goToRoom("start");
+    }
+
+    public void step() {
+        var instruction = view.readInstruction();
+        var optionalAction = this.findAction(instruction, this.currentRoom);
+        optionalAction.ifPresentOrElse(this::executeAction, () -> view.writeLine("This action is not supported."));
     }
 
     private void goToRoom(String name) {
@@ -32,16 +37,6 @@ public class StoryTeller {
 
     private void enterRoom(Story.Room room) {
         view.writeLine(room.message());
-
-        while (true) {
-            var instruction = view.readInstruction();
-
-            var optionalAction = this.findAction(instruction, this.currentRoom);
-
-            optionalAction.ifPresentOrElse(this::executeAction, () -> {
-                view.writeLine("This action is not supported.");
-            });
-        }
     }
 
     private Optional<Story.Action> findAction(Instruction instruction, Story.Room room) {
