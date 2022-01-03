@@ -18,6 +18,10 @@ rooms:
       look:
         door:
           - message: A big door.
+      go:
+        sql:
+          - message: You go to the SQL-room
+            goRoom: sql-room
   corridor:
     message: |
       You enter the corridor right behind the door. It looks longer than it probably is, but you are unable
@@ -65,3 +69,25 @@ rooms:
       look:
         ghosts:
           - message: They are flying!
+
+  sql-room:
+    message: |
+      You notice in Person sitting on a chair with an office desk in the back of the room. You know this Person. It's Gabi.
+      Gabi is forcing you to write some SQL since you didn't finish the ÜK with a grade high enough.
+      Tears are forming under your eyes. You try to plead to Gabi for forgiveness. She laughs like the devil himself.
+      "Haha, surely not. Now come on, Sit down."
+    verbs:
+      fight:
+        gabi:
+          - message: You're to weak, Gabi has the power of a Dataserver
+      call:
+        rolf:
+          - message: He's not going to help you.
+      run:
+        away:
+          - message: You can't run.
+      behave:
+        well:
+          - message: | 
+              You're doing what you're told. The SELECT statements make you scream in agony. Gabi is checking every statement
+              you make. After 30 statements. Gabi forces you to take another test.
