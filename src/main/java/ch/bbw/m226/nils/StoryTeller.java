@@ -11,7 +11,6 @@ public class StoryTeller {
     private final StoryView view;
     private final Story story;
     private Set<String> states;
-
     private Story.Room currentRoom;
 
     public StoryTeller(StoryView view, Story story) {
@@ -29,7 +28,7 @@ public class StoryTeller {
 
         if (instruction == Instruction.EXIT_GAME) {
             view.writeLine("Exiting game.");
-            System.exit(0);
+            throw new ExitException();
         }
 
         if (instruction.verb().equals("?save")) {
@@ -107,15 +106,25 @@ public class StoryTeller {
     }
 
     private Optional<Story.Action> findAction(Instruction instruction, Story.Room room) {
-        var optionalVerb = room.verbs().entrySet().stream().filter(possibleVerb -> possibleVerb.getKey().equals(instruction.verb())).findAny(); // imagine rusts `?` here
+        var optionalVerb = Optional.ofNullable(room.verbs().get(instruction.verb()));
 
-        return optionalVerb.flatMap(verb -> {
-            var nouns = verb.getValue().entrySet();
+        var optionalVerb2 = optionalVerb.or(() ->
+                Optional.ofNullable(
+                        room.verbs().get(this.story.synonyms().get(instruction.verb()))
+                )
+        );
 
-            var actions = nouns.stream().filter(noun -> noun.getKey().equals(instruction.noun())).map(Map.Entry::getValue).findAny().orElseGet(ArrayList::new);
+        return optionalVerb2.flatMap(nouns -> {
+            var actions = Optional.ofNullable(nouns.get(instruction.noun()))
+                    .orElseGet(ArrayList::new);
 
 
-            return actions.stream().filter(action -> action.ifState() == null || this.states.contains(action.ifState())).findFirst();
+            return actions.stream()
+                    .filter(action ->
+                            action.ifState() == null
+                                    || this.states.contains(action.ifState())
+                    )
+                    .findFirst();
         });
     }
 

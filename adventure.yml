@@ -22,6 +22,9 @@ rooms:
         sql:
           - message: You go to the SQL-room
             goRoom: sql-room
+        home:
+          - message: bye!
+            goRoom: _exit
   corridor:
     message: |
       You enter the corridor right behind the door. It looks longer than it probably is, but you are unable
@@ -69,9 +72,6 @@ rooms:
       look:
         ghosts:
           - message: They are flying!
-      go:
-        home:
-          - goRoom: _exit
 
   sql-room:
     message: |
@@ -94,3 +94,17 @@ rooms:
           - message: | 
               You're doing what you're told. The SELECT statements make you scream in agony. Gabi is checking every statement
               you make. After 30 statements. Gabi forces you to take another test.
+
+words:
+  go:
+    nounError: You cannot go anywhere.
+    verbError: You cannot go to there.
+
+synonyms:
+  walk: dagdhg
+
+authors:
+  - name: nils
+    function: creator and writer
+  - name: corsin
+    function: sql-room writer, credits idea
