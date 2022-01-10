@@ -8,8 +8,19 @@ public class Main {
     private static final String DEFAULT_PATH = "adventure.yml";
 
     public static void main(String[] args) {
+        var filePath = DEFAULT_PATH;
+
+        if (args.length > 1) {
+            filePath = args[0];
+        } else {
+            var env = System.getenv("TEXT_ADVENTURE_SOURCE");
+            if (env != null) {
+                filePath = env;
+            }
+        }
+
         try {
-            Story story = new StoryReader().read(DEFAULT_PATH);
+            Story story = new StoryReader().read(filePath);
 
             StoryView storyView = new ConsoleStoryView();
 

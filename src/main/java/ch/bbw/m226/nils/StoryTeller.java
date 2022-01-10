@@ -1,11 +1,16 @@
 package ch.bbw.m226.nils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class StoryTeller {
     private final StoryView view;
     private final Story story;
-    private final Set<String> states;
+    private Set<String> states;
 
     private Story.Room currentRoom;
 
@@ -27,8 +32,57 @@ public class StoryTeller {
             System.exit(0);
         }
 
+        if (instruction.verb().equals("?save")) {
+            this.save(instruction.noun());
+            return;
+        }
+
+        if (instruction.verb().equals("?load")) {
+            this.save(instruction.noun());
+            return;
+        }
+
         var optionalAction = this.findAction(instruction, this.currentRoom);
         optionalAction.ifPresentOrElse(this::executeAction, () -> view.writeLine("This action is not supported."));
+    }
+
+    private void load(String pathNull) {
+        var path = Optional.ofNullable(pathNull).orElse("savefile.json");
+
+        try {
+            var bufRead = Files.newBufferedReader(Paths.get(path));
+            var saveData = new ObjectMapper().readValue(bufRead, SaveState.class);
+
+            this.states = saveData.states();
+
+            this.goToRoom(saveData.currentRoom());
+
+        } catch (IOException e) {
+            System.err.println("Failed to read file, no data loaded: " + e.getMessage());
+        }
+    }
+
+    private void save(String pathNull) {
+        var path = Optional.ofNullable(pathNull).orElse("savefile.json");
+
+        var saveData = new SaveState(
+                this.states,
+                this.story.rooms().entrySet().stream()
+                        .filter(entry -> entry.getValue().equals(this.currentRoom))
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                        .orElseThrow()
+        );
+
+        try {
+            var bufWrite = Files.newBufferedWriter(Paths.get(path));
+            new ObjectMapper().writeValue(bufWrite, saveData);
+
+            this.view.writeLine("Saved game under path `" + path + "`");
+
+        } catch (IOException e) {
+            System.err.println("Failed to save file: " + e.getMessage());
+        }
     }
 
     private void goToRoom(String name) {
@@ -49,27 +103,15 @@ public class StoryTeller {
     }
 
     private Optional<Story.Action> findAction(Instruction instruction, Story.Room room) {
-        var optionalVerb = room.verbs()
-                .entrySet()
-                .stream()
-                .filter(possibleVerb -> possibleVerb.getKey().equals(instruction.verb()))
-                .findAny(); // imagine rusts `?` here
+        var optionalVerb = room.verbs().entrySet().stream().filter(possibleVerb -> possibleVerb.getKey().equals(instruction.verb())).findAny(); // imagine rusts `?` here
 
         return optionalVerb.flatMap(verb -> {
             var nouns = verb.getValue().entrySet();
 
-            var actions = nouns.stream()
-                    .filter(noun -> noun.getKey().equals(instruction.noun()))
-                    .map(Map.Entry::getValue)
-                    .findAny()
-                    .orElseGet(ArrayList::new);
+            var actions = nouns.stream().filter(noun -> noun.getKey().equals(instruction.noun())).map(Map.Entry::getValue).findAny().orElseGet(ArrayList::new);
 
 
-            return actions.stream()
-                    .filter(action ->
-                            action.ifState() == null || this.states.contains(action.ifState())
-                    )
-                    .findFirst();
+            return actions.stream().filter(action -> action.ifState() == null || this.states.contains(action.ifState())).findFirst();
         });
     }
 

@@ -23,6 +23,26 @@ public class ConsoleStoryView implements StoryView {
                 return Instruction.EXIT_GAME;
             }
 
+            if (split[0].equals("?save")) {
+                String path = null;
+
+                if (split.length > 1) {
+                    path = split[1];
+                }
+
+                return new Instruction("?save", path);
+            }
+
+            if (split[0].equals("?load")) {
+                String path = null;
+
+                if (split.length > 1) {
+                    path = split[1];
+                }
+
+                return new Instruction("?load", path);
+            }
+
             if (split.length < 2) {
                 this.writeLine("Invalid instruction. Instruction must contain a verb and a noun.");
                 continue;
