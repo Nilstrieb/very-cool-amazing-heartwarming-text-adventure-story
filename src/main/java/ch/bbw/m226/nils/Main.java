@@ -28,9 +28,18 @@ public class Main {
 
             storyTeller.init();
 
-            while (true) {
-                storyTeller.step();
+            // this is *not* a great solution, but it works.
+            try {
+                while (true) {
+                    storyTeller.step();
+                }
+            } catch (ExitException ignored) {
             }
+
+            System.out.println("""
+                    Written and made by nils
+                    SQL-Room by corsin
+                    """);
 
         } catch (JsonProcessingException e) {
             System.err.println("Invalid yaml file: " + e.getMessage());

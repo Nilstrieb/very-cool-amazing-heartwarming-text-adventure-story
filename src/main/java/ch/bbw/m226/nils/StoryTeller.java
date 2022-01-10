@@ -38,7 +38,7 @@ public class StoryTeller {
         }
 
         if (instruction.verb().equals("?load")) {
-            this.save(instruction.noun());
+            this.load(instruction.noun());
             return;
         }
 
@@ -86,6 +86,10 @@ public class StoryTeller {
     }
 
     private void goToRoom(String name) {
+        if (name.equals("_exit")) {
+            throw new ExitException();
+        }
+
         this.currentRoom = this.story.rooms().get(name);
 
         if (this.currentRoom == null) {
