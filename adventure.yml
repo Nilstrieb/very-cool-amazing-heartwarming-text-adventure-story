@@ -1,3 +1,5 @@
+startRoom: start
+
 rooms:
   start:
     message: |
@@ -13,7 +15,7 @@ rooms:
         door:
           - ifState: outside-door-open
             message: You go through the door.
-            goRoom: corridor
+            room: corridor
           - message: The door is closed.
       look:
         door:
@@ -21,10 +23,10 @@ rooms:
       go:
         sql:
           - message: You go to the SQL-room
-            goRoom: sql-room
+            room: sql-room
         home:
           - message: bye!
-            goRoom: _exit
+            room: _exit
   corridor:
     message: |
       You enter the corridor right behind the door. It looks longer than it probably is, but you are unable
@@ -36,7 +38,7 @@ rooms:
           - ifState: corridor-has-gone-forward-twice
             message: |
               You take another step.
-            goRoom: sacrifice-hall
+            room: sacrifice-hall
 
           - ifState: corridor-has-gone-forward
             message: |
@@ -91,17 +93,21 @@ rooms:
           - message: You can't run.
       behave:
         well:
-          - message: | 
+          - message: |
               You're doing what you're told. The SELECT statements make you scream in agony. Gabi is checking every statement
               you make. After 30 statements. Gabi forces you to take another test.
 
-words:
-  go:
-    nounError: You cannot go anywhere.
-    verbError: You cannot go to there.
+verbs:
+  default:
+    errors:
+      verb: You cannot do that.
+      object: That's the wrong object.
 
-synonyms:
-  walk: dagdhg
+  go:
+    synonyms: [ walk ]
+    errors:
+      verb: You cannot go anywhere.
+      object: You cannot go to there.
 
 authors:
   - name: nils

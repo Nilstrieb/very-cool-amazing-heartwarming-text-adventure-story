@@ -20,7 +20,7 @@ public class StoryTeller {
     }
 
     public void init() {
-        this.goToRoom("start");
+        this.goToRoom(story.startRoom());
     }
 
     public void step() {
@@ -106,15 +106,17 @@ public class StoryTeller {
     }
 
     private Optional<Story.Action> findAction(Instruction instruction, Story.Room room) {
+        // first, try to get the verb directly
         var optionalVerb = Optional.ofNullable(room.verbs().get(instruction.verb()));
 
-        var optionalVerb2 = optionalVerb.or(() ->
-                Optional.ofNullable(
-                        room.verbs().get(this.story.synonyms().get(instruction.verb()))
-                )
+        // if it's not found, try to search for a synonym
+        var optionalVerbSynonym = optionalVerb.or(() ->
+                story.synonymFor(instruction.verb())
+                        .flatMap(verb -> Optional.ofNullable(room.verbs().get(verb)))
         );
 
-        return optionalVerb2.flatMap(nouns -> {
+        return optionalVerbSynonym.flatMap(nouns -> {
+            // we've found a verb, now look for the noun
             var actions = Optional.ofNullable(nouns.get(instruction.noun()))
                     .orElseGet(ArrayList::new);
 
@@ -135,8 +137,8 @@ public class StoryTeller {
             this.states.add(action.setState());
         }
 
-        if (action.goRoom() != null) {
-            this.goToRoom(action.goRoom());
+        if (action.room() != null) {
+            this.goToRoom(action.room());
         }
     }
 }

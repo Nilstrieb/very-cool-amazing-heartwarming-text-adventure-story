@@ -14,7 +14,7 @@ public class StoryTellerTest {
         var emptyMap = new HashMap<String, Story.Room>();
         emptyMap.put("start", new Story.Room("", new HashMap<>()));
 
-        EMPTY_STORY = new Story(emptyMap);
+        EMPTY_STORY = new Story("start", emptyMap, new HashMap<>(), new ArrayList<>());
     }
 
     @Test
