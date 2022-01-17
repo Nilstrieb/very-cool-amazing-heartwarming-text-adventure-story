@@ -102,6 +102,7 @@ verbs:
     errors:
       verb: You cannot do that.
       object: That's the wrong object.
+      state: You are not allowed to do this.
 
   go:
     synonyms: [ walk ]

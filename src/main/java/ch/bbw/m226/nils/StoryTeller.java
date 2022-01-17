@@ -5,7 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static java.util.Optional.ofNullable;
 
 public class StoryTeller {
     private final StoryView view;
@@ -41,12 +46,17 @@ public class StoryTeller {
             return;
         }
 
-        var optionalAction = this.findAction(instruction, this.currentRoom);
-        optionalAction.ifPresentOrElse(this::executeAction, () -> view.writeLine("This action is not supported."));
+        try {
+            var action = this.findAction(instruction, this.currentRoom);
+            this.executeAction(action);
+        } catch (ActionNotFoundException notFoundException) {
+            var message = this.getError(instruction, notFoundException.kind());
+            this.view.writeLine(message);
+        }
     }
 
     private void load(String pathNull) {
-        var path = Optional.ofNullable(pathNull).orElse("savefile.json");
+        var path = ofNullable(pathNull).orElse("savefile.json");
 
         try {
             var bufRead = Files.newBufferedReader(Paths.get(path));
@@ -62,7 +72,7 @@ public class StoryTeller {
     }
 
     private void save(String pathNull) {
-        var path = Optional.ofNullable(pathNull).orElse("savefile.json");
+        var path = ofNullable(pathNull).orElse("savefile.json");
 
         var saveData = new SaveState(
                 this.states,
@@ -105,29 +115,36 @@ public class StoryTeller {
         view.writeLine("Possible actions: " + possibleActions);
     }
 
-    private Optional<Story.Action> findAction(Instruction instruction, Story.Room room) {
+    private Story.Action findAction(Instruction instruction, Story.Room room) throws ActionNotFoundException {
         // first, try to get the verb directly
-        var optionalVerb = Optional.ofNullable(room.verbs().get(instruction.verb()));
+        var optionalVerb = ofNullable(room.verbs().get(instruction.verb()));
 
         // if it's not found, try to search for a synonym
         var optionalVerbSynonym = optionalVerb.or(() ->
                 story.synonymFor(instruction.verb())
-                        .flatMap(verb -> Optional.ofNullable(room.verbs().get(verb)))
+                        .flatMap(verb -> ofNullable(room.verbs().get(verb)))
         );
 
-        return optionalVerbSynonym.flatMap(nouns -> {
-            // we've found a verb, now look for the noun
-            var actions = Optional.ofNullable(nouns.get(instruction.noun()))
-                    .orElseGet(ArrayList::new);
+        var nouns = optionalVerbSynonym.orElseThrow(() ->
+                new ActionNotFoundException(ActionNotFoundException.NotFoundKind.VERB)
+        );
+
+        // we've found a verb, now look for the noun
+        var optionalActions = ofNullable(nouns.get(instruction.noun()));
+
+        var actions = optionalActions.orElseThrow(() ->
+                new ActionNotFoundException(ActionNotFoundException.NotFoundKind.OBJECT)
+        );
 
 
-            return actions.stream()
-                    .filter(action ->
-                            action.ifState() == null
-                                    || this.states.contains(action.ifState())
-                    )
-                    .findFirst();
-        });
+        return actions.stream()
+                .filter(action ->
+                        action.ifState() == null
+                                || this.states.contains(action.ifState())
+                )
+                .findFirst()
+                .orElseThrow(() -> new ActionNotFoundException(ActionNotFoundException.NotFoundKind.STATE));
+
     }
 
     private void executeAction(Story.Action action) {
@@ -140,5 +157,25 @@ public class StoryTeller {
         if (action.room() != null) {
             this.goToRoom(action.room());
         }
+    }
+
+    private String getError(Instruction instruction, ActionNotFoundException.NotFoundKind kind) {
+        var defaultVerb = this.story.verbs().get("default");
+
+        var verb = ofNullable(this.story.verbs().get(instruction.noun()))
+                .or(() -> this.story.synonymFor(instruction.verb())
+                        // java variable scoping is awesome and doesn't allow me to name this `verb`
+                        .map(verb1 -> this.story.verbs().get(verb1))
+                )
+                .orElse(defaultVerb);
+
+        var errors = ofNullable(verb.errors())
+                .orElseGet(defaultVerb::errors);
+
+        return switch (kind) {
+            case VERB -> ofNullable(errors.verb()).orElseGet(() -> defaultVerb.errors().verb());
+            case OBJECT -> ofNullable(errors.object()).orElseGet(() -> defaultVerb.errors().object());
+            case STATE -> ofNullable(errors.state()).orElseGet(() -> defaultVerb.errors().state());
+        };
     }
 }

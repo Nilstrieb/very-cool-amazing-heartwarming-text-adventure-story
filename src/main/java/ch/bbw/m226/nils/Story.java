@@ -28,7 +28,7 @@ public record Story(String startRoom, Map<String, Room> rooms, Map<String, Verb>
     public record Verb(Errors errors, List<String> synonyms) {
     }
 
-    public record Errors(String verb, String object) {
+    public record Errors(String verb, String object, String state) {
     }
 
     public record Author(String name, String function) {
