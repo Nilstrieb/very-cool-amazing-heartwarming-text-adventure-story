@@ -6,15 +6,25 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 public class StoryTellerTest {
 
     private static final Story EMPTY_STORY;
 
     static {
         var emptyMap = new HashMap<String, Story.Room>();
-        emptyMap.put("start", new Story.Room("", new HashMap<>()));
+        emptyMap.put("start", new Story.Room("", Map.of("testverb",
+                Map.of("testnoun",
+                        List.of(new Story.Action("test", null, null, "badstate"))
+                )
+        )));
 
-        EMPTY_STORY = new Story("start", emptyMap, new HashMap<>(), new ArrayList<>());
+        EMPTY_STORY = new Story("start", emptyMap,
+                Map.of("default", new Story.Verb(
+                        new Story.Errors("invalid verb", "invalid object", "invalid state"), new ArrayList<>()
+                )),
+                new ArrayList<>()
+        );
     }
 
     @Test
@@ -25,11 +35,17 @@ public class StoryTellerTest {
         var teller = new StoryTeller(view, EMPTY_STORY);
         teller.init();
 
-        view.queueInput(new Instruction("invalid", "action"));
+        view.queueInput(new Instruction("invalid", "invalid"));
+        view.queueInput(new Instruction("testverb", "invalid"));
+        view.queueInput(new Instruction("testverb", "testnoun"));
 
         teller.step();
+        teller.step();
+        teller.step();
 
-        assertEquals("This action is not supported.", output.get(2));
+        assertEquals("invalid verb", output.get(2));
+        assertEquals("invalid object", output.get(3));
+        assertEquals("invalid state", output.get(4));
     }
 
 

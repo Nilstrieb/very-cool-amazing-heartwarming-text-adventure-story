@@ -74,6 +74,10 @@ rooms:
       look:
         ghosts:
           - message: They are flying!
+      go:
+        home:
+          - message: You go home.
+            room: _exit
 
   sql-room:
     message: |
@@ -96,6 +100,10 @@ rooms:
           - message: |
               You're doing what you're told. The SELECT statements make you scream in agony. Gabi is checking every statement
               you make. After 30 statements. Gabi forces you to take another test.
+      write:
+        sql:
+          - message: You write some SQL. Gabi finally allows you to go home.
+            room: _exit
 
 verbs:
   default:
