@@ -14,7 +14,7 @@ Filepath mitgeben.
 Der default Filepath vom adventure ist `adventure.yml`, mit einem fallback auf die env var `TEXT_ADVENTURE_SOURCE` oder
 das erste argument.
 
-Es gibt auch hübsche Farben!
+Es gibt auch hübsche ✨Farben✨!
 
 Mit `?exit` oder `?quit` kann man das Spiel schliessen.
 
