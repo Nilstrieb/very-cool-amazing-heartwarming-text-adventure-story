@@ -19,3 +19,7 @@ Es gibt auch hübsche ✨Farben✨!
 Mit `?exit` oder `?quit` kann man das Spiel schliessen.
 
 Ich erwarte eine 5.5, der Code ist gut und kann das was er soll gut, aber es hat nicht soo viel features.
+
+dafür, dass es java ist, ist es überraschend nicht schlecht geworden
+
+bitte kein java mehr bbw
