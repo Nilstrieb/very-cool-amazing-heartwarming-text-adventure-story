@@ -3,11 +3,12 @@ package ch.bbw.m226.nils;
 import java.util.Scanner;
 
 public class ConsoleStoryView implements StoryView {
+
     private final Scanner stdin = new Scanner(System.in);
 
     @Override
-    public void writeLine(String message) {
-        System.out.println(message);
+    public void writeLine(String message, Colors.Color color) {
+        System.out.println(Colors.color(message, color));
     }
 
     @Override

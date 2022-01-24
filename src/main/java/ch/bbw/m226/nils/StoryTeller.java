@@ -50,7 +50,7 @@ public class StoryTeller {
             this.executeAction(action);
         } catch (ActionNotFoundException notFoundException) {
             var message = this.getError(instruction, notFoundException.kind());
-            this.view.writeLine(message);
+            this.view.writeLine(message, Colors.Color.RED);
         }
     }
 
@@ -111,7 +111,7 @@ public class StoryTeller {
         view.writeLine(room.message());
 
         String possibleActions = String.join(", ", room.verbs().keySet());
-        view.writeLine("Possible actions: " + possibleActions);
+        view.writeLine("Possible actions: " + possibleActions, Colors.Color.CYAN);
     }
 
     private Story.Action findAction(Instruction instruction, Story.Room room) throws ActionNotFoundException {
@@ -147,7 +147,7 @@ public class StoryTeller {
     }
 
     private void executeAction(Story.Action action) {
-        view.writeLine(action.message());
+        view.writeLine(action.message(), Colors.Color.GREEN);
 
         if (action.setState() != null) {
             this.states.add(action.setState());

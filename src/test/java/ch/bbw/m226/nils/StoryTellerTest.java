@@ -59,7 +59,7 @@ public class StoryTellerTest {
         }
 
         @Override
-        public void writeLine(String message) {
+        public void writeLine(String message, Colors.Color _color) {
             this.lines.add(message);
         }
 

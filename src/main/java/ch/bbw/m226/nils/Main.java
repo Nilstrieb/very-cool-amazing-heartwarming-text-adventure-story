@@ -50,22 +50,22 @@ public class Main {
 
     private static void writeCredits(Story story) throws IOException {
         var dashes = "─".repeat(INNER_WIDTH);
-        var empty = "│" + " ".repeat(INNER_WIDTH) + "│";
+        var empty = Colors.red("│" + " ".repeat(INNER_WIDTH) + "│");
 
-        System.out.println("╭" + dashes + "╮");
+        System.out.println(Colors.red("╭" + dashes + "╮"));
         System.out.println(empty);
-        System.out.println(center("AUTHORS"));
+        System.out.println(Colors.CYAN + center("AUTHORS", Colors.Color.BLUE));
         System.out.println(empty);
 
         for (var author : story.authors()) {
-            System.out.println(center(author.name()));
-            System.out.println(center(author.function()));
+            System.out.println(center(author.name(), Colors.Color.CYAN));
+            System.out.println(center(author.function(), Colors.Color.GREEN));
             System.out.println(empty);
         }
-        System.out.println("╰" + dashes + "╯");
+        System.out.println(Colors.red("╰" + dashes + "╯"));
     }
 
-    private static String center(String msg) {
+    private static String center(String msg, Colors.Color color) {
         var len = msg.length();
 
         if (len > INNER_WIDTH) {
@@ -74,6 +74,6 @@ public class Main {
 
         var pad = ((double) (INNER_WIDTH - len)) / 2;
 
-        return "│" + " ".repeat((int) pad) + msg + " ".repeat((int) Math.round(pad)) + "│";
+        return Colors.red("│") + " ".repeat((int) pad) + Colors.color(msg, color) + " ".repeat((int) Math.round(pad)) + Colors.red("│");
     }
 }
